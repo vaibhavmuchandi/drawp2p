@@ -13,19 +13,19 @@ type ProtocolStream = {
 
 
 function changesTopic(topic: string): string {
-    return `/marcopolo/gossipPad/${topic}/changes/0.0.1`
+    return `/drawp2p/y/${topic}/changes/0.0.1`
 }
 
 function stateVectorTopic(topic: string): string {
-    return `/marcopolo/gossipPad/${topic}/stateVector/0.0.1`
+    return `/drawp2p/y/${topic}/stateVector/0.0.1`
 }
 
 function syncProtocol(topic: string): string {
-    return `/marcopolo/gossipPad/${topic}/sync/0.0.1`
+    return `/drawp2p/y/${topic}/sync/0.0.1`
 }
 
 function awarenessProtocolTopic(topic: string): string {
-    return `/marcopolo/gossipPad/${topic}/awareness/0.0.1`
+    return `/drawp2p/y/${topic}/awareness/0.0.1`
 }
 
 class Provider {

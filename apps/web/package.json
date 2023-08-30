@@ -9,10 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chainsafe/libp2p-gossipsub": "^10.1.0",
+    "@chainsafe/libp2p-noise": "^13.0.0",
+    "@drawp2p/y-libp2p": "workspace:^",
+    "@libp2p/mplex": "^9.0.5",
+    "@libp2p/webrtc": "^3.1.7",
+    "@libp2p/websockets": "^7.0.5",
+    "@tldraw/tldraw": "^1.29.2",
+    "libp2p": "^0.46.7",
     "next": "^13.4.19",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "ui": "workspace:*"
+    "ui": "workspace:*",
+    "y-presence": "0.2.3",
+    "yjs": "13.6.7"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^13.4.19",

@@ -5,6 +5,9 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "tsc && mocha ./dist/tests/index.test.js --timeout 30000",
     "test-manual": "tsc && node ./dist/tests/index.manual.test.js",
@@ -16,8 +19,8 @@
     "yjs": "^13.6.7"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Vaibhav Muchandi (0xvaibhav.eth)",
+  "license": "MIT",
   "devDependencies": {
     "@chainsafe/libp2p-gossipsub": "^10.1.0",
     "@chainsafe/libp2p-noise": "^13.0.0",

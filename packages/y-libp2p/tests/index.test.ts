@@ -1,4 +1,4 @@
-import Provider from "../src/index.js"
+import Provider from "../src/Provider.js"
 import { Doc as YDoc, } from 'yjs'
 import { Uint8ArrayEquals } from "../src/utils.js"
 import * as Y from 'yjs'

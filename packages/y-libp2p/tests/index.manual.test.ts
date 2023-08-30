@@ -6,7 +6,7 @@ import { gossipsub } from "@chainsafe/libp2p-gossipsub";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { identifyService } from "libp2p/identify";
 
-import Provider from "../src/index.js"
+import Provider from "../src/Provider.js"
 import * as Y from 'yjs'
 
 const createPeer = async () => {

@@ -1,0 +1,35 @@
+{
+  "name": "y-libp2p",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "tsc && mocha ./dist/tests/index.test.js --timeout 30000",
+    "test-manual": "tsc && node ./dist/tests/index.manual.test.js",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@libp2p/interface-libp2p": "^3.2.0",
+    "y-protocols": "^1.0.x",
+    "yjs": "^13.6.7"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@chainsafe/libp2p-gossipsub": "^10.1.0",
+    "@chainsafe/libp2p-noise": "^13.0.0",
+    "@chainsafe/libp2p-yamux": "^5.0.0",
+    "@libp2p/mplex": "^9.0.5",
+    "@libp2p/peer-id": "^3.0.2",
+    "@libp2p/websockets": "^7.0.5",
+    "@multiformats/multiaddr": "^12.1.7",
+    "@types/mocha": "^10.0.1",
+    "chai": "^4.3.8",
+    "libp2p": "^0.46.7",
+    "mocha": "^10.2.0",
+    "typescript": "^5.2.2"
+  }
+}

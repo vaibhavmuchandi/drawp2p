@@ -1,7 +1,7 @@
 {
-  "name": "y-libp2p",
+  "name": "@drawp2p/y-libp2p",
   "version": "1.0.0",
-  "description": "",
+  "description": "Libp2p provider for YJS",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",

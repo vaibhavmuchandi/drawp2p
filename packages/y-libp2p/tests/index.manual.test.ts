@@ -63,15 +63,15 @@ const main = async () => {
     setInterval(() => {
         insertToEnd(ydoc2.getText("testDoc"), "Hi");
         const str = printStates({ ydoc1, ydoc2 });
-        // console.log(`\n---Doc States---`);
-        // for (let doc of str) {
-        //   console.log(`${doc.key} | ${doc.data}`);
-        // }
-        // if (str[0].data !== str[1].data) {
-        //   console.log(`Not synced...`);
-        // } else {
-        //   console.log(`Synced...`);
-        // }
+        console.log(`\n---Doc States---`);
+        for (let doc of str) {
+            console.log(`${doc.key} | ${doc.data}`);
+        }
+        if (str[0].data !== str[1].data) {
+            console.log(`Not synced...`);
+        } else {
+            console.log(`Synced...`);
+        }
     }, 3000);
 }
 

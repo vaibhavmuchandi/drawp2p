@@ -103,7 +103,7 @@ describe('Libp2p YJS Provider Tests', () => {
     });
 
     it('Provider syncs awareness across 2 peers', async function () {
-        this.timeout(10000); // Increase timeout if needed.
+        this.timeout(10000);
 
         const topic = 'test';
         const ydoc1 = new Y.Doc();

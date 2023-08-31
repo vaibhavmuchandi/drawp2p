@@ -1,4 +1,3 @@
-import { webRTC } from "@libp2p/webrtc"
 import { webSockets } from "@libp2p/websockets"
 import * as filters from "@libp2p/websockets/filters"
 import { mplex } from "@libp2p/mplex"
@@ -7,19 +6,14 @@ import { circuitRelayTransport } from 'libp2p/circuit-relay'
 import { noise } from "@chainsafe/libp2p-noise"
 import { gossipsub } from "@chainsafe/libp2p-gossipsub"
 import { identifyService } from 'libp2p/identify'
+import { multiaddr } from "@multiformats/multiaddr"
 
 export const createPeer = async () => {
     const node = await createLibp2p({
-        addresses: {
-            listen: [
-                '/webrtc'
-            ]
-        },
         transports: [
             webSockets({
                 filter: filters.all,
             }),
-            webRTC(),
             circuitRelayTransport({
                 discoverRelays: 1,
             }),
@@ -40,6 +34,13 @@ export const createPeer = async () => {
             pubsub: gossipsub({ allowPublishToZeroPeers: true })
         }
     })
-    return node
+
+    await node.dial(multiaddr("/ip4/127.0.0.1/tcp/51557/ws/p2p/12D3KooWRy4cCUkaP78NKgtiRsDN96JDA7EaEaMNByxTSnGfzLos"))
+
+    return new Promise((resolve) => {
+        node.addEventListener("self:peer:update", () => {
+            resolve(node)
+        })
+    })
 }
 

@@ -4,6 +4,8 @@ import * as Y from 'yjs'
 import { Uint8ArrayEquals } from './utils.js'
 import { peerIdFromString } from '@libp2p/peer-id'
 import * as awarenessProtocol from 'y-protocols/awareness.js'
+import { EventEmitter } from 'eventemitter3';
+import { Multiaddr, multiaddr } from "@multiformats/multiaddr"
 
 type ProtocolStream = {
     sink: (data: Iterable<any> | AsyncIterable<any>) => Promise<void>
@@ -36,6 +38,8 @@ class Provider {
     stateVectors: { [key: string]: Uint8Array } = {};
     unsyncedPeers: Set<string> = new Set();
     initialSync = false;
+    private events: EventEmitter;
+    private isEmitted: boolean = false
 
     public awareness: Awareness;
 
@@ -48,22 +52,45 @@ class Provider {
         this.peerID = this.node.peerId.toString()
         this.stateVectors[this.peerID] = Y.encodeStateVector(this.ydoc)
         this.awareness = new awarenessProtocol.Awareness(ydoc)
+        this.events = new EventEmitter();
 
         this.awareness.setLocalStateField("user", {
             name: this.peerID
         })
 
+        console.log(`RoomID`, topic)
+
+        this.emit("status", { status: 'connecting' })
+
+        this.node.addEventListener("peer:connect", (_evt) => {
+            console.log(`Connected to ${_evt.detail.toString()}`)
+        })
+
         ydoc.on('update', this.onUpdate.bind(this));
+        this.node.addEventListener("self:peer:update", (_evt) => {
+            console.log(`Updated, emitting`)
+            if (!this.isEmitted) {
+                setTimeout(() => {
+                    this.emit("status", { status: 'connected' })
+                    console.log("emitted")
+                    console.log(`${this.node.getMultiaddrs()[0].toString()}`)
+                }, 5000)
+                this.isEmitted = true
+            }
+        });
 
         (this.node.services.pubsub as any).subscribe(changesTopic(topic));
         (this.node.services.pubsub as any).subscribe(stateVectorTopic(topic));
         (this.node.services.pubsub as any).subscribe(awarenessProtocolTopic(topic));
         (this.node.services.pubsub as any).addEventListener("message", (_evt) => {
             if (_evt.detail.topic == changesTopic(topic)) {
+                console.log("changes msg")
                 this.onPubSubChanges(_evt)
             } else if (_evt.detail.topic == stateVectorTopic(topic)) {
+                console.log('topic msg')
                 this.onPubSubStateVector(_evt)
             } else if (_evt.detail.topic == awarenessProtocolTopic(topic)) {
+                console.log('awareness msg')
                 this.onPubSubAwareness(_evt);
             } else {
                 console.log("Unknow subscription msg")
@@ -74,6 +101,18 @@ class Provider {
         setTimeout(() => {
             this.tryInitialSync(this.stateVectors[this.peerID], this);
         }, 3000)
+    }
+
+    on(event: string, listener: (...args: any[]) => void) {
+        this.events.on(event, listener);
+    }
+
+    off(event: string, listener: (...args: any[]) => void) {
+        this.events.off(event, listener);
+    }
+
+    emit(event: string, ...args: any[]) {
+        this.events.emit(event, ...args);
     }
 
     destroy() {

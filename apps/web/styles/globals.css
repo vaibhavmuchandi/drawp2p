@@ -1,50 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
+
 html,
 body {
     padding: 0;
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-        Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    font-family: 'Inter', sans-serif;
+    overscroll-behavior: none;
+    touch-action: none;
+    min-height: 100vh;
+    font-size: 16px;
+    /* mobile viewport bug fix */
+    min-height: -webkit-fill-available;
+    height: 100%;
 }
 
-a {
-    color: inherit;
-    text-decoration: none;
-}
-
+html,
 * {
     box-sizing: border-box;
 }
 
-.tldraw {
+.tldraw__editor {
     position: fixed;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    width: 100%;
-    height: 100%;
+    inset: 0px;
+    overflow: hidden;
 }
 
-.p-md {
-    padding: 12px;
+.examples {
+    padding: 16px;
 }
 
-.flex {
+.examples__header {
+    width: fit-content;
+    padding-bottom: 32px;
+}
+
+.examples__lockup {
+    height: 56px;
+    width: auto;
+}
+
+.examples__list {
     display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
 
-.space-between {
-    justify-content: space-between;
+.examples__list__item {
+    padding: 8px 12px;
+    margin: 0px -12px;
 }
 
-.color-dodgerblue {
-    color: dodgerblue;
+.examples__list__item a {
+    padding: 8px 12px;
+    margin: 0px -12px;
+    text-decoration: none;
+    color: inherit;
 }
 
-.absolute {
-    position: absolute;
-    z-index: 100;
-    left: 0;
-    right: 0;
-    top: 40px;
+.examples__list__item a:hover {
+    text-decoration: underline;
 }

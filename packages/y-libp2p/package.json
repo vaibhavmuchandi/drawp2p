@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@libp2p/interface-libp2p": "^3.2.0",
+    "eventemitter3": "^5.0.1",
     "y-protocols": "^1.0.x",
     "yjs": "^13.6.7"
   },

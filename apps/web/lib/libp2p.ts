@@ -7,6 +7,7 @@ import { noise } from "@chainsafe/libp2p-noise"
 import { gossipsub } from "@chainsafe/libp2p-gossipsub"
 import { identifyService } from 'libp2p/identify'
 import { multiaddr } from "@multiformats/multiaddr"
+import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery'
 
 export const createPeer = async () => {
     const node = await createLibp2p({
@@ -32,15 +33,14 @@ export const createPeer = async () => {
         services: {
             identify: identifyService(),
             pubsub: gossipsub({ allowPublishToZeroPeers: true })
-        }
+        },
+        peerDiscovery: [
+            pubsubPeerDiscovery() as any
+        ]
     })
 
-    await node.dial(multiaddr("/ip4/127.0.0.1/tcp/51557/ws/p2p/12D3KooWRy4cCUkaP78NKgtiRsDN96JDA7EaEaMNByxTSnGfzLos"))
+    await node.dial(multiaddr("/ip4/127.0.0.1/tcp/51366/ws/p2p/12D3KooWGFXaeS9Nv6UAvSkci3CyWaY3gJNQffJRp8CTHRepKJB3"))
 
-    return new Promise((resolve) => {
-        node.addEventListener("self:peer:update", () => {
-            resolve(node)
-        })
-    })
+    return node
 }
 

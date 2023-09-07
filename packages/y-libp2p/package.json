@@ -17,7 +17,14 @@
     "@libp2p/interface-libp2p": "^3.2.0",
     "eventemitter3": "^5.0.1",
     "y-protocols": "^1.0.x",
-    "yjs": "^13.6.7"
+    "yjs": "^13.6.7",
+    "libp2p": "^0.46.7",
+    "@chainsafe/libp2p-gossipsub": "^10.1.0",
+    "@chainsafe/libp2p-noise": "^13.0.0",
+    "@libp2p/mplex": "^9.0.5",
+    "@libp2p/pubsub-peer-discovery": "^8.0.4",
+    "@libp2p/websockets": "^7.0.5",
+    "@multiformats/multiaddr": "^12.1.7"
   },
   "keywords": [],
   "author": "Vaibhav Muchandi (0xvaibhav.eth)",

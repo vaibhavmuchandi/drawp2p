@@ -1,11 +1,12 @@
-import type { Libp2p } from '@libp2p/interface-libp2p'
+import { Libp2p } from 'libp2p'
 import type { Awareness } from 'y-protocols/awareness'
 import * as Y from 'yjs'
 import { Uint8ArrayEquals } from './utils.js'
 import { peerIdFromString } from '@libp2p/peer-id'
 import * as awarenessProtocol from 'y-protocols/awareness.js'
-import { EventEmitter } from 'eventemitter3';
-import { Multiaddr, multiaddr } from "@multiformats/multiaddr"
+import EventEmitter from 'eventemitter3'
+import { createPeer } from './utils.js'
+import { multiaddr } from '@multiformats/multiaddr'
 
 type ProtocolStream = {
     sink: (data: Iterable<any> | AsyncIterable<any>) => Promise<void>
@@ -39,7 +40,6 @@ class Provider {
     unsyncedPeers: Set<string> = new Set();
     initialSync = false;
     private events: EventEmitter;
-    private isEmitted: boolean = false
 
     public awareness: Awareness;
 
@@ -49,7 +49,7 @@ class Provider {
         this.ydoc = ydoc;
         this.node = node;
         this.topic = topic;
-        this.peerID = this.node.peerId.toString()
+        this.peerID = node.peerId.toString()
         this.stateVectors[this.peerID] = Y.encodeStateVector(this.ydoc)
         this.awareness = new awarenessProtocol.Awareness(ydoc)
         this.events = new EventEmitter();
@@ -58,26 +58,15 @@ class Provider {
             name: this.peerID
         })
 
-        console.log(`RoomID`, topic)
-
-        this.emit("status", { status: 'connecting' })
-
         this.node.addEventListener("peer:connect", (_evt) => {
             console.log(`Connected to ${_evt.detail.toString()}`)
         })
 
+        setTimeout(() => {
+            this.emit('status', { status: 'connected' });
+        }, 5000)
+
         ydoc.on('update', this.onUpdate.bind(this));
-        this.node.addEventListener("self:peer:update", (_evt) => {
-            console.log(`Updated, emitting`)
-            if (!this.isEmitted) {
-                setTimeout(() => {
-                    this.emit("status", { status: 'connected' })
-                    console.log("emitted")
-                    console.log(`${this.node.getMultiaddrs()[0].toString()}`)
-                }, 5000)
-                this.isEmitted = true
-            }
-        });
 
         (this.node.services.pubsub as any).subscribe(changesTopic(topic));
         (this.node.services.pubsub as any).subscribe(stateVectorTopic(topic));
@@ -93,11 +82,15 @@ class Provider {
                 console.log('awareness msg')
                 this.onPubSubAwareness(_evt);
             } else {
-                console.log("Unknow subscription msg")
+                console.log("Unknow subscription msg", _evt.detail.topic)
             }
         });
 
-        node.handle(syncProtocol(topic), this.onSyncMsg.bind(this));
+        try {
+            node.handle(syncProtocol(topic), this.onSyncMsg.bind(this), { runOnTransientConnection: true });
+        } catch (e) {
+            console.log('handler registerd', e)
+        }
         setTimeout(() => {
             this.tryInitialSync(this.stateVectors[this.peerID], this);
         }, 3000)
@@ -125,6 +118,14 @@ class Provider {
         this.node.unhandle(syncProtocol(this.topic));
 
         this.initialSync = true;
+    }
+
+    static init = async (roomId: string) => {
+        const doc = new Y.Doc()
+        const node = await createPeer()
+        await node.dial(multiaddr("/ip4/127.0.0.1/tcp/56000/ws/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf"))
+        const provider = new Provider(doc, node, roomId)
+        return provider
     }
 
     private async tryInitialSync(updateData: Uint8Array, origin: this | any) {
@@ -249,6 +250,7 @@ class Provider {
     }
 
     private async syncPeer(peerID: string) {
+        if (!peerID) return
         const peer = await this.node.peerStore.get(peerIdFromString(peerID));
         let success = false;
         if (!peer) {

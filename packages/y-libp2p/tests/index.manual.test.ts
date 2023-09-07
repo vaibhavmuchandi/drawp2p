@@ -8,13 +8,12 @@ import { identifyService } from "libp2p/identify";
 
 import Provider from "../src/Provider.js"
 import * as Y from 'yjs'
+import { circuitRelayTransport } from "libp2p/circuit-relay";
+import { multiaddr } from "@multiformats/multiaddr";
 
 const createPeer = async () => {
     const node = await createLibp2p({
-        addresses: {
-            listen: [`/ip4/0.0.0.0/tcp/0/ws`],
-        },
-        transports: [webSockets()],
+        transports: [webSockets(), circuitRelayTransport({ discoverRelays: 2 })],
         connectionEncryption: [noise()],
         streamMuxers: [yamux(), mplex()],
         services: {
@@ -49,30 +48,35 @@ const main = async () => {
     const node2 = await createPeer()
     console.log(`Node 1: ${node1.peerId.toString()}`)
     console.log(`Node 2: ${node2.peerId.toString()}`)
+    await node1.dial(multiaddr("/ip4/127.0.0.1/tcp/56000/ws/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf"))
     const provider1 = new Provider(ydoc1, node1 as any, 'test')
-    const provider2 = new Provider(ydoc2, node2 as any, 'test')
-    await node1.dial(node2.getMultiaddrs()[0])
-    ydoc1.getText("testDoc").insert(0, "Hello")
+    node1.addEventListener("self:peer:update", async () => {
+        if (node1.getMultiaddrs()[0]) {
+            const provider2 = new Provider(ydoc2, node2 as any, 'test')
+            await node2.dial(node1.getMultiaddrs()[0])
+            ydoc1.getText("testDoc").insert(0, "Hello")
 
-    setInterval(() => {
-        console.log(provider1.awareness.getStates())
-    }, 3000)
+            setInterval(() => {
+                console.log(provider1.awareness.getStates())
+            }, 3000)
 
 
-    // Wait for the state to be synced
-    setInterval(() => {
-        insertToEnd(ydoc2.getText("testDoc"), "Hi");
-        const str = printStates({ ydoc1, ydoc2 });
-        console.log(`\n---Doc States---`);
-        for (let doc of str) {
-            console.log(`${doc.key} | ${doc.data}`);
+            // Wait for the state to be synced
+            setInterval(() => {
+                insertToEnd(ydoc2.getText("testDoc"), "Hi");
+                const str = printStates({ ydoc1, ydoc2 });
+                console.log(`\n---Doc States---`);
+                for (let doc of str) {
+                    console.log(`${doc.key} | ${doc.data}`);
+                }
+                if (str[0].data !== str[1].data) {
+                    console.log(`Not synced...`);
+                } else {
+                    console.log(`Synced...`);
+                }
+            }, 3000);
         }
-        if (str[0].data !== str[1].data) {
-            console.log(`Not synced...`);
-        } else {
-            console.log(`Synced...`);
-        }
-    }, 3000);
+    })
 }
 
 main()

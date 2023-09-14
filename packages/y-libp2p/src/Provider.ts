@@ -1,11 +1,9 @@
-import { Libp2p } from 'libp2p'
+import type { Libp2p } from '@libp2p/interface-libp2p'
 import type { Awareness } from 'y-protocols/awareness'
 import * as Y from 'yjs'
 import { Uint8ArrayEquals } from './utils.js'
 import { peerIdFromString } from '@libp2p/peer-id'
 import * as awarenessProtocol from 'y-protocols/awareness.js'
-import EventEmitter from 'eventemitter3'
-import { createPeer } from './utils.js'
 import { multiaddr } from '@multiformats/multiaddr'
 
 type ProtocolStream = {
@@ -39,7 +37,6 @@ class Provider {
     stateVectors: { [key: string]: Uint8Array } = {};
     unsyncedPeers: Set<string> = new Set();
     initialSync = false;
-    private events: EventEmitter;
 
     public awareness: Awareness;
 
@@ -49,22 +46,13 @@ class Provider {
         this.ydoc = ydoc;
         this.node = node;
         this.topic = topic;
-        this.peerID = node.peerId.toString()
+        this.peerID = this.node.peerId.toString()
         this.stateVectors[this.peerID] = Y.encodeStateVector(this.ydoc)
         this.awareness = new awarenessProtocol.Awareness(ydoc)
-        this.events = new EventEmitter();
 
         this.awareness.setLocalStateField("user", {
             name: this.peerID
         })
-
-        this.node.addEventListener("peer:connect", (_evt) => {
-            console.log(`Connected to ${_evt.detail.toString()}`)
-        })
-
-        setTimeout(() => {
-            this.emit('status', { status: 'connected' });
-        }, 5000)
 
         ydoc.on('update', this.onUpdate.bind(this));
 
@@ -73,39 +61,20 @@ class Provider {
         (this.node.services.pubsub as any).subscribe(awarenessProtocolTopic(topic));
         (this.node.services.pubsub as any).addEventListener("message", (_evt) => {
             if (_evt.detail.topic == changesTopic(topic)) {
-                console.log("changes msg")
                 this.onPubSubChanges(_evt)
             } else if (_evt.detail.topic == stateVectorTopic(topic)) {
-                console.log('topic msg')
                 this.onPubSubStateVector(_evt)
             } else if (_evt.detail.topic == awarenessProtocolTopic(topic)) {
-                console.log('awareness msg')
                 this.onPubSubAwareness(_evt);
             } else {
-                console.log("Unknow subscription msg", _evt.detail.topic)
+                console.log("Unknow subscription msg")
             }
         });
 
-        try {
-            node.handle(syncProtocol(topic), this.onSyncMsg.bind(this), { runOnTransientConnection: true });
-        } catch (e) {
-            console.log('handler registerd', e)
-        }
+        node.handle(syncProtocol(topic), this.onSyncMsg.bind(this));
         setTimeout(() => {
             this.tryInitialSync(this.stateVectors[this.peerID], this);
         }, 3000)
-    }
-
-    on(event: string, listener: (...args: any[]) => void) {
-        this.events.on(event, listener);
-    }
-
-    off(event: string, listener: (...args: any[]) => void) {
-        this.events.off(event, listener);
-    }
-
-    emit(event: string, ...args: any[]) {
-        this.events.emit(event, ...args);
     }
 
     destroy() {
@@ -118,14 +87,6 @@ class Provider {
         this.node.unhandle(syncProtocol(this.topic));
 
         this.initialSync = true;
-    }
-
-    static init = async (roomId: string) => {
-        const doc = new Y.Doc()
-        const node = await createPeer()
-        await node.dial(multiaddr("/ip4/127.0.0.1/tcp/56000/ws/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf"))
-        const provider = new Provider(doc, node, roomId)
-        return provider
     }
 
     private async tryInitialSync(updateData: Uint8Array, origin: this | any) {
@@ -250,7 +211,6 @@ class Provider {
     }
 
     private async syncPeer(peerID: string) {
-        if (!peerID) return
         const peer = await this.node.peerStore.get(peerIdFromString(peerID));
         let success = false;
         if (!peer) {
@@ -259,7 +219,7 @@ class Provider {
         for (const ma of peer.addresses) {
             const maStr = ma.multiaddr
             try {
-                const stream = await this.node.dialProtocol(maStr, syncProtocol(this.topic))
+                const stream = await this.node.dialProtocol(multiaddr(`${maStr}/p2p/${peerID}`), syncProtocol(this.topic))
                 await this.runSyncProtocol(stream, peerID, true)
                 success = true;
                 return

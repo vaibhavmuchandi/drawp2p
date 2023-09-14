@@ -22,7 +22,7 @@ import { createPeer } from "../lib/libp2p"
 import * as Y from 'yjs'
 
 export function useYjsStore({
-    roomId = 'example',
+    roomId,
     shapeUtils = [],
 }: Partial<{
     roomId: string
@@ -43,7 +43,7 @@ export function useYjsStore({
             const nodeInstance = await createPeer();
             if (!isMounted) return;
             setNode(nodeInstance);
-            const roomInstance = new Libp2pProvider(doc, nodeInstance, roomId);
+            const roomInstance = new Libp2pProvider(doc, nodeInstance, roomId as any);
             if (!isMounted) return;
             setRoom(roomInstance);
         }
@@ -268,5 +268,5 @@ export function useYjsStore({
 
     console.log("form hook")
 
-    return storeWithStatus
+    return [storeWithStatus, node]
 }

@@ -22,7 +22,7 @@ export const createPeer = async () => {
         streamMuxers: [yamux(), mplex()],
         peerDiscovery: [
             bootstrap({
-                list: ["/ip4/127.0.0.1/tcp/50771/ws/p2p/12D3KooWP985s2oaD9hoU2g1xx7N7MYQy2EHrHetVV8yJHmfU4bQ"]
+                list: ["/ip4/127.0.0.1/tcp/51788/ws/p2p/12D3KooWH8B4YCGUX6DCDCUBeLcdbkWgtcHhUtuhTEpfYZ8jZUfo"]
             }),
             pubsubPeerDiscovery()
         ],
@@ -44,4 +44,3 @@ export const createPeer = async () => {
 
     return node
 }
-

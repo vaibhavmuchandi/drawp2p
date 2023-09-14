@@ -52,9 +52,13 @@ class Provider {
 
         this.awareness.setLocalStateField("user", {
             name: this.peerID
-        })
+        });
 
         ydoc.on('update', this.onUpdate.bind(this));
+
+        this.node.addEventListener("peer:discovery", (_evt) => {
+            this.node.peerStore.patch(_evt.detail.id, _evt.detail)
+        });
 
         (this.node.services.pubsub as any).subscribe(changesTopic(topic));
         (this.node.services.pubsub as any).subscribe(stateVectorTopic(topic));
@@ -219,7 +223,7 @@ class Provider {
         for (const ma of peer.addresses) {
             const maStr = ma.multiaddr
             try {
-                const stream = await this.node.dialProtocol(multiaddr(`${maStr}/p2p/${peerID}`), syncProtocol(this.topic))
+                const stream = await this.node.dialProtocol(peerIdFromString(peerID), syncProtocol(this.topic))
                 await this.runSyncProtocol(stream, peerID, true)
                 success = true;
                 return

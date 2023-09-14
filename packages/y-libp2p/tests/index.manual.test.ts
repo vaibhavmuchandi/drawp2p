@@ -10,6 +10,7 @@ import Provider from "../src/Provider.js"
 import * as Y from 'yjs'
 import { circuitRelayTransport } from "libp2p/circuit-relay";
 import { bootstrap } from "@libp2p/bootstrap";
+import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery"
 
 const createPeer = async () => {
     const node = await createLibp2p({
@@ -18,8 +19,9 @@ const createPeer = async () => {
         streamMuxers: [yamux(), mplex()],
         peerDiscovery: [
             bootstrap({
-                list: ["/ip4/127.0.0.1/tcp/50287/ws/p2p/12D3KooWSMMFC2qToiqdEAPKSnHoXPtSocWQ48m3fQ8egftMG4Q4"]
-            })
+                list: ["/dns4/alpha-relay.huddle01.live/tcp/443/wss/p2p/12D3KooWLnTDmyjBHBeT6JUK4R9BKsfAM8c8895rYABDhSAJgE5k"]
+            }),
+            pubsubPeerDiscovery()
         ],
         services: {
             pubsub: gossipsub({ allowPublishToZeroPeers: true }),
@@ -50,13 +52,20 @@ function insertToEnd(yText: Y.Text, content: string) {
 const main = async () => {
     const ydoc1 = new Y.Doc()
     const ydoc2 = new Y.Doc()
+    const ydoc3 = new Y.Doc()
     const node1 = await createPeer()
     const node2 = await createPeer()
-    const provider1 = new Provider(ydoc1, node1 as any, 'test')
-    const provider2 = new Provider(ydoc2, node2 as any, 'test')
+    const node3 = await createPeer()
+    node3.addEventListener("peer:connect", (_evt) => {
+        console.log(`Node 3 connected to ${_evt.detail.toString()}`)
+    })
+    const provider1 = new Provider(ydoc1, node1, 'test')
+    const provider2 = new Provider(ydoc2, node2, 'test')
+    const provider3 = new Provider(ydoc3, node3, 'test')
     console.log(`Node 1: ${node1.peerId.toString()}`)
     console.log(`Node 2: ${node2.peerId.toString()}`)
     node1.addEventListener("self:peer:update", async () => {
+        console.log("updated addr")
         if (node1.getMultiaddrs()[0]) {
             console.log(`Creating second provider`)
             ydoc1.getText("testDoc").insert(0, "Hello")
@@ -71,7 +80,7 @@ const main = async () => {
             setInterval(async () => {
                 insertToEnd(ydoc2.getText("testDoc"), "Hi");
                 // console.log(await node1.peerStore.all())
-                const str = printStates({ ydoc1, ydoc2 });
+                const str = printStates({ ydoc1, ydoc2, ydoc3 });
                 console.log(`\n---Doc States---`);
                 for (let doc of str) {
                     console.log(`${doc.key} | ${doc.data}`);
@@ -83,7 +92,9 @@ const main = async () => {
                 }
             }, 3000);
 
-
+            setTimeout(async () => {
+                await node3.dial(node2.getMultiaddrs()[0])
+            }, 10000)
         }
     })
 }

@@ -22,6 +22,7 @@
     "@libp2p/websockets": "^6.0.3",
     "@multiformats/multiaddr": "^12.1.2",
     "@tldraw/tldraw": "^2.0.0-canary.c7ae756c0b81",
+    "autoprefixer": "^10.4.15",
     "libp2p": "^0.45.9",
     "next": "^13.4.19",
     "react": "^18.2.0",

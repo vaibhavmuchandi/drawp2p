@@ -17,8 +17,13 @@ export default function YjsExample() {
 const NameEditor = track(() => {
 
   return (
-    <div style={{ pointerEvents: 'all', display: 'flex', alignItems: 'center', height: '5%', gap: '10px', flexDirection: "row" }}>
-      <Link style={{ padding: '0.5rem 1rem', cursor: 'pointer', height: '100%' }} href="/abc">Start Session</Link>
+    <div className="pointer-events-auto flex items-end justify-end h-1/20 w-full">
+      <Link
+        href="/abc"
+        className="text-center px-4 py-2 cursor-pointer h-full text-white rounded-lg bg-[#2f80ed] w-2/5"
+      >
+        Start Session
+      </Link>
     </div>
 
   )

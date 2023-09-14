@@ -18,7 +18,7 @@ export default function YjsExample() {
     useEffect(() => {
         if (node && !hasDialed) {
             const dial = async () => {
-                const conn = await node.dial(multiaddr(`/ip4/127.0.0.1/tcp/51788/ws/p2p/12D3KooWH8B4YCGUX6DCDCUBeLcdbkWgtcHhUtuhTEpfYZ8jZUfo/p2p-circuit/p2p/${peerId}`))
+                const conn = await node.dial(multiaddr(`/ip4/127.0.0.1/tcp/57515/ws/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf/p2p-circuit/p2p/${peerId}`))
                 console.log(conn)
                 setHasDialed(true)
             }
@@ -36,38 +36,69 @@ export default function YjsExample() {
 
 const NameEditor = track(({ node, roomId }) => {
     const editor = useEditor()
-    const [addr, setAddr] = useState("")
+    const [connectedUsers, setConnectedUsers] = useState(0)
+    const [connections, setConnections] = useState<any>([])
 
     const { color, name } = editor.user
 
-    return (
-        <div style={{ pointerEvents: 'all', display: 'flex', alignItems: 'center', height: '5%', gap: '10px', flexDirection: "row" }}>
-            <input
-                type="color"
-                value={color}
-                style={{ height: '100%', width: '30px' }}
-                onChange={(e) => {
-                    editor.user.updateUserPreferences({
-                        color: e.currentTarget.value,
-                    })
-                }}
-            />
-            <input
-                value={node.peerId ? node.peerId.toString() : ""}
-                style={{ flex: 1, padding: '0.5rem', height: '100%' }}
-                onChange={(e) => {
-                    editor.user.updateUserPreferences({
-                        name: e.currentTarget.value,
-                    })
-                }}
-            />
-            <button
-                style={{ padding: '0.5rem 1rem', cursor: 'pointer', height: '100%' }}
-                onClick={async () => { navigator.clipboard.writeText(`http://localhost:3000/${roomId}/${node.peerId.toString()}`) }}
-            >
-                Copy Session Link
-            </button>
-        </div>
+    const getConns = async () => {
+        const conns = await node.getConnections()
+        setConnectedUsers(conns.length - 1)
 
+        for (let conn of conns) {
+            if (!connections.includes(conn.remotePeer.toString()))
+                setConnections([...connections, conn.remotePeer.toString()])
+        }
+    }
+    getConns()
+    node.addEventListener("peer:connect", async () => {
+        const conns = await node.getConnections()
+        setConnectedUsers(conns.length - 1)
+        for (let conn of conns) {
+            if (!connections.includes(conn.remotePeer.toString()))
+                setConnections([...connections, conn.remotePeer.toString()])
+        }
+    })
+
+    return (
+        <div className="pointer-events-auto flex flex-col top-0 h-1/6 w-full mb-5">
+            <div className='flex flex-row h-2/6 justify-start top-0 w-full'>
+                <input
+                    type="color"
+                    value={color}
+                    style={{ height: '100%', width: '30px' }}
+                    onChange={(e) => {
+                        editor.user.updateUserPreferences({
+                            color: e.currentTarget.value,
+                        })
+                    }}
+                />
+                <input
+                    value={node.peerId ? node.peerId.toString() : ""}
+                    style={{ flex: 1, padding: '0.5rem', height: '100%' }}
+                    onChange={(e) => {
+                        editor.user.updateUserPreferences({
+                            name: e.currentTarget.value,
+                        })
+                    }}
+                />
+                <button
+                    className="text-center px-4 py-2 cursor-pointer h-full text-white rounded-lg bg-[#2f80ed] w-2/5"
+                    onClick={async () => { navigator.clipboard.writeText(`http://localhost:3000/${roomId}/${node.peerId.toString()}`) }}
+                >
+                    Copy Session Link
+                </button>
+            </div>
+            <div className='flex flex-col items-center justify-center mt-1 space-y-2'>
+                <div>Connected users: {connectedUsers}</div>
+                <div className="overflow-y-auto h-12 w-full border rounded-md p-2">
+                    {
+                        connections.map((user, index) => (
+                            <div key={index} className="py-1 px-2 hover:bg-gray-200">{user}</div>
+                        ))
+                    }
+                </div>
+            </div>
+        </div>
     )
 })

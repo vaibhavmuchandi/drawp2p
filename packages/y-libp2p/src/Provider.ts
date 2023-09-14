@@ -5,6 +5,7 @@ import { Uint8ArrayEquals } from './utils.js'
 import { peerIdFromString } from '@libp2p/peer-id'
 import * as awarenessProtocol from 'y-protocols/awareness.js'
 import { multiaddr } from '@multiformats/multiaddr'
+import EventEmitter from 'eventemitter3'
 
 type ProtocolStream = {
     sink: (data: Iterable<any> | AsyncIterable<any>) => Promise<void>
@@ -37,6 +38,7 @@ class Provider {
     stateVectors: { [key: string]: Uint8Array } = {};
     unsyncedPeers: Set<string> = new Set();
     initialSync = false;
+    eventEmitter: EventEmitter
 
     public awareness: Awareness;
 
@@ -49,6 +51,7 @@ class Provider {
         this.peerID = this.node.peerId.toString()
         this.stateVectors[this.peerID] = Y.encodeStateVector(this.ydoc)
         this.awareness = new awarenessProtocol.Awareness(ydoc)
+        this.eventEmitter = new EventEmitter()
 
         this.awareness.setLocalStateField("user", {
             name: this.peerID
@@ -58,6 +61,12 @@ class Provider {
 
         this.node.addEventListener("peer:discovery", (_evt) => {
             this.node.peerStore.patch(_evt.detail.id, _evt.detail)
+        });
+
+        this.node.addEventListener("self:peer:update", (_evt) => {
+            if (this.node.getMultiaddrs()[0]) {
+                this.eventEmitter.emit("status", { status: 'connected' })
+            }
         });
 
         (this.node.services.pubsub as any).subscribe(changesTopic(topic));

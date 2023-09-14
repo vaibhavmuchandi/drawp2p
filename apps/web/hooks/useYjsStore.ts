@@ -43,7 +43,7 @@ export function useYjsStore({
             const nodeInstance = await createPeer();
             if (!isMounted) return;
             setNode(nodeInstance);
-            const roomInstance = new Libp2pProvider(doc, nodeInstance as any, roomId);
+            const roomInstance = new Libp2pProvider(doc, nodeInstance, roomId);
             if (!isMounted) return;
             setRoom(roomInstance);
         }
@@ -61,7 +61,7 @@ export function useYjsStore({
         const unsubs: (() => void)[] = []
         let didConnect = false;
         if (!room) return
-        room.on(
+        room.eventEmitter.on(
             'status',
             ({ status }: { status: 'connecting' | 'disconnected' | 'connected' }) => {
                 // If we're disconnected, set the store status to 'synced-remote' and the connection status to 'offline'
@@ -184,7 +184,7 @@ export function useYjsStore({
                 /* -------------------- Awareness ------------------- */
 
                 // Create the instance presence derivation
-                const yClientId = room.awareness.clientID.toString()
+                const yClientId = room.awareness.clientID
                 const presenceId = InstancePresenceRecordType.createId(yClientId)
                 const userPreferencesComputed = computed('ok', () =>
                     getUserPreferences()

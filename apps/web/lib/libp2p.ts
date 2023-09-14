@@ -6,21 +6,31 @@ import { circuitRelayTransport } from 'libp2p/circuit-relay'
 import { noise } from "@chainsafe/libp2p-noise"
 import { gossipsub } from "@chainsafe/libp2p-gossipsub"
 import { identifyService } from 'libp2p/identify'
-import { multiaddr } from "@multiformats/multiaddr"
 import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery'
+import { yamux } from "@chainsafe/libp2p-yamux"
+import { bootstrap } from "@libp2p/bootstrap"
+import { kadDHT } from "@libp2p/kad-dht"
+
 
 export const createPeer = async () => {
     const node = await createLibp2p({
-        transports: [
-            webSockets({
-                filter: filters.all,
-            }),
-            circuitRelayTransport({
-                discoverRelays: 1,
-            }),
-        ],
+        transports: [webSockets({
+            filter: filters.all,
+        }),
+        circuitRelayTransport({ discoverRelays: 2 })],
         connectionEncryption: [noise()],
-        streamMuxers: [mplex()],
+        streamMuxers: [yamux(), mplex()],
+        peerDiscovery: [
+            bootstrap({
+                list: ["/ip4/127.0.0.1/tcp/50771/ws/p2p/12D3KooWP985s2oaD9hoU2g1xx7N7MYQy2EHrHetVV8yJHmfU4bQ"]
+            }),
+            pubsubPeerDiscovery()
+        ],
+        services: {
+            pubsub: gossipsub({ allowPublishToZeroPeers: true }),
+            identify: identifyService(),
+            dht: kadDHT()
+        },
         connectionGater: {
             denyDialMultiaddr: () => {
                 // by default we refuse to dial local addresses from the browser since they
@@ -30,16 +40,7 @@ export const createPeer = async () => {
                 return false
             }
         },
-        services: {
-            identify: identifyService(),
-            pubsub: gossipsub({ allowPublishToZeroPeers: true })
-        },
-        peerDiscovery: [
-            pubsubPeerDiscovery() as any
-        ]
     })
-
-    await node.dial(multiaddr("/ip4/127.0.0.1/tcp/51366/ws/p2p/12D3KooWGFXaeS9Nv6UAvSkci3CyWaY3gJNQffJRp8CTHRepKJB3"))
 
     return node
 }

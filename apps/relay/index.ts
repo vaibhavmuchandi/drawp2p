@@ -7,6 +7,7 @@ import * as filters from '@libp2p/websockets/filters'
 import { identifyService } from 'libp2p/identify'
 import { gossipsub } from '@chainsafe/libp2p-gossipsub'
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery"
+import { kadDHT } from "@libp2p/kad-dht"
 
 const main = async () => {
     const server = await createLibp2p({
@@ -22,12 +23,22 @@ const main = async () => {
         streamMuxers: [mplex()],
         services: {
             identify: identifyService(),
-            relay: circuitRelayServer(),
-            pubsub: gossipsub({ allowPublishToZeroPeers: true })
-        },
-        peerDiscovery: [
-            pubsubPeerDiscovery()
-        ]
+            relay: circuitRelayServer({
+                reservations: {
+                    applyDefaultLimit: true,
+                    defaultDurationLimit: 180 * 60 * 1000,
+                    defaultDataLimit: BigInt(1 << 30),
+                    maxReservations: 32,
+                }
+            }),
+            pubsub: gossipsub({ allowPublishToZeroPeers: true }),
+            dht: kadDHT()
+        }
+    })
+
+    server.addEventListener("peer:discovery", (_peer) => {
+        console.log('Discovered peer')
+        server.peerStore.save(_peer.detail.id, _peer.detail)
     })
 
     console.log("p2p addr: ", server.getMultiaddrs().map((ma) => ma.toString()))

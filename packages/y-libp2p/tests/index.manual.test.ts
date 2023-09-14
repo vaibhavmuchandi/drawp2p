@@ -19,7 +19,7 @@ const createPeer = async () => {
         streamMuxers: [yamux(), mplex()],
         peerDiscovery: [
             bootstrap({
-                list: ["/dns4/alpha-relay.huddle01.live/tcp/443/wss/p2p/12D3KooWLnTDmyjBHBeT6JUK4R9BKsfAM8c8895rYABDhSAJgE5k"]
+                list: ["/ip4/127.0.0.1/tcp/50519/ws/p2p/12D3KooWLkuApJUGzgz4JEqqVRbPfGETXf5tRbUgWDA5acWfAn5r"]
             }),
             pubsubPeerDiscovery()
         ],

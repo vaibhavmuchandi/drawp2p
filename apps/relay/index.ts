@@ -6,8 +6,6 @@ import { webSockets } from '@libp2p/websockets'
 import * as filters from '@libp2p/websockets/filters'
 import { identifyService } from 'libp2p/identify'
 import { gossipsub } from '@chainsafe/libp2p-gossipsub'
-import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery"
-import { kadDHT } from "@libp2p/kad-dht"
 
 const main = async () => {
     const server = await createLibp2p({
@@ -32,13 +30,7 @@ const main = async () => {
                 }
             }),
             pubsub: gossipsub({ allowPublishToZeroPeers: true }),
-            dht: kadDHT()
         }
-    })
-
-    server.addEventListener("peer:discovery", (_peer) => {
-        console.log('Discovered peer')
-        server.peerStore.save(_peer.detail.id, _peer.detail)
     })
 
     console.log("p2p addr: ", server.getMultiaddrs().map((ma) => ma.toString()))

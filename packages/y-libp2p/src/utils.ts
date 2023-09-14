@@ -7,7 +7,7 @@ import { noise } from "@chainsafe/libp2p-noise"
 import { gossipsub } from "@chainsafe/libp2p-gossipsub"
 import { identifyService } from 'libp2p/identify'
 import { multiaddr } from "@multiformats/multiaddr"
-import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery'
+// import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery'
 
 export function Uint8ArrayEquals(a: Uint8Array, b: Uint8Array): boolean {
     if (a.length !== b.length) {
@@ -41,9 +41,6 @@ export const createPeer = async (): Promise<Libp2p> => {
         services: {
             identify: identifyService(),
             pubsub: gossipsub({ allowPublishToZeroPeers: true })
-        },
-        peerDiscovery: [
-            pubsubPeerDiscovery() as any
-        ]
+        }
     })
 }

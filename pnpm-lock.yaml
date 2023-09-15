@@ -106,7 +106,7 @@ importers:
         specifier: ^12.1.2
         version: 12.1.7
       '@tldraw/tldraw':
-        specifier: ^2.0.0-canary.c7ae756c0b81
+        specifier: ^2.0.0-alpha.14
         version: 2.0.0-canary.c7ae756c0b81(@types/react-dom@18.2.0)(@types/react@18.2.0)(react-dom@18.2.0)(react@18.2.0)
       autoprefixer:
         specifier: ^10.4.15
@@ -2708,10 +2708,10 @@ packages:
       '@tldraw/tlschema': 2.0.0-canary.c7ae756c0b81(react@18.2.0)
       '@tldraw/utils': 2.0.0-canary.c7ae756c0b81
       '@tldraw/validate': 2.0.0-canary.c7ae756c0b81
-      '@types/core-js': 2.5.5
+      '@types/core-js': 2.5.6
       '@use-gesture/react': 10.2.27(react@18.2.0)
       classnames: 2.3.2
-      core-js: 3.32.1
+      core-js: 3.32.2
       eventemitter3: 4.0.7
       idb: 7.1.1
       is-plain-object: 5.0.0
@@ -2832,8 +2832,8 @@ packages:
       - typescript
     dev: true
 
-  /@types/core-js@2.5.5:
-    resolution: {integrity: sha512-C4vwOHrhsvxn7UFyk4NDQNUpgNKdWsT/bL39UWyD75KSEOObZSKa9mYDOCM5FGeJG2qtbG0XiEbUKND2+j0WOg==}
+  /@types/core-js@2.5.6:
+    resolution: {integrity: sha512-zLzoC7avO4EYUUYCSzDaahSP1QJEpZQcPxqs91mPeFdh2NS4hQBcnRoEc9RuXfJ8cdN/KXUWukMmZGcKaWeOvw==}
     dev: false
 
   /@types/glob@7.2.0:
@@ -3719,8 +3719,8 @@ packages:
     requiresBuild: true
     dev: true
 
-  /core-js@3.32.1:
-    resolution: {integrity: sha512-lqufgNn9NLnESg5mQeYsxQP5w7wrViSj0jr/kv6ECQiByzQkrn1MKvV0L3acttpDqfQrHLwr2KCMgX5b8X+lyQ==}
+  /core-js@3.32.2:
+    resolution: {integrity: sha512-pxXSw1mYZPDGvTQqEc5vgIb83jGQKFGYWY76z4a7weZXUolw3G+OvpZqSRcfYOoOVUQJYEPsWeQK8pKEnUtWxQ==}
     requiresBuild: true
     dev: false
 

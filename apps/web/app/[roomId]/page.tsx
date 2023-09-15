@@ -8,7 +8,7 @@ import { multiaddr } from '@multiformats/multiaddr'
 import { useParams } from "next/navigation"
 
 
-export default function YjsExample() {
+export default function YjsHost() {
     const { roomId } = useParams()
     const [store, node] = useYjsStore({
         roomId: roomId as string,
@@ -51,19 +51,11 @@ const NameEditor = track(({ node, roomId }) => {
     return (
         <div className="pointer-events-auto flex flex-col top-0 h-1/6 w-full mb-5">
             <div className='flex flex-row h-2/6 justify-start top-0 w-full'>
-                <input
-                    type="color"
-                    value={color}
-                    style={{ height: '100%', width: '30px' }}
-                    onChange={(e) => {
-                        editor.user.updateUserPreferences({
-                            color: e.currentTarget.value,
-                        })
-                    }}
-                />
+
                 <input
                     value={node.peerId ? node.peerId.toString() : ""}
-                    style={{ flex: 1, padding: '0.5rem', height: '100%' }}
+                    disabled
+                    style={{ flex: 1, padding: '0.5rem', height: '100%', width: "100%" }}
                     onChange={(e) => {
                         editor.user.updateUserPreferences({
                             name: e.currentTarget.value,

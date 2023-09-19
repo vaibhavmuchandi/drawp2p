@@ -22,7 +22,7 @@ const main = async () => {
     const server = await createLibp2p({
         peerId: peerId,
         addresses: {
-            listen: ['/ip4/127.0.0.1/tcp/57515/ws']
+            listen: ['/ip4/127.0.0.1/tcp/41000/ws']
         },
         transports: [
             webSockets({

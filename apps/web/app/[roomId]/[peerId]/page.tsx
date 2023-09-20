@@ -18,7 +18,7 @@ export default function YjsPeer() {
     useEffect(() => {
         if (node && !hasDialed) {
             const dial = async () => {
-                const conn = await node.dial(multiaddr(`/ip4/127.0.0.1/tcp/57515/ws/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf/p2p-circuit/p2p/${peerId}`))
+                const conn = await node.dial(multiaddr(`/ip4/20.40.52.207/tcp/41000/ws/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf/p2p-circuit/p2p/${peerId}`))
                 console.log(conn)
                 setHasDialed(true)
             }
@@ -29,7 +29,7 @@ export default function YjsPeer() {
 
     return (
         <div className="tldraw__editor">
-            <Tldraw autoFocus store={store} shareZone={<NameEditor node={node} roomId={roomId} />} />
+            <Tldraw autoFocus store={store} shareZone={<NameEditor node={node} roomId={roomId} />} topZone={<CustomTopZone />} />
         </div>
     )
 }
@@ -93,3 +93,16 @@ const NameEditor = track(({ node, roomId }) => {
         </div>
     )
 })
+
+function CustomTopZone() {
+    return (
+        <div
+            style={{
+                width: '100%',
+                textAlign: 'center',
+            }}
+        >
+            <p>Design without boundaries. Welcome to DrawP2P</p>
+        </div>
+    )
+}

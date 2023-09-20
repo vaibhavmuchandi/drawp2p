@@ -11,7 +11,7 @@ export default function Landing() {
 
   return (
     <div className="tldraw__editor">
-      <Tldraw autoFocus shareZone={<NameEditor />} />
+      <Tldraw autoFocus shareZone={<NameEditor />} topZone={<CustomTopZone />} />
     </div>
   )
 }
@@ -35,3 +35,16 @@ const NameEditor = track(() => {
 
   )
 })
+
+function CustomTopZone() {
+  return (
+    <div
+      style={{
+        width: '100%',
+        textAlign: 'center',
+      }}
+    >
+      <p>Design without boundaries. Welcome to DrawP2P</p>
+    </div>
+  )
+}

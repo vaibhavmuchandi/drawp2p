@@ -16,7 +16,7 @@ export default function YjsHost() {
 
     return (
         <div className="tldraw__editor">
-            <Tldraw autoFocus store={store} shareZone={<NameEditor node={node} roomId={roomId} />} />
+            <Tldraw autoFocus store={store} shareZone={<NameEditor node={node} roomId={roomId} />} topZone={<CustomTopZone />} />
         </div>
     )
 }
@@ -82,3 +82,16 @@ const NameEditor = track(({ node, roomId }) => {
         </div>
     )
 })
+
+function CustomTopZone() {
+    return (
+        <div
+            style={{
+                width: '100%',
+                textAlign: 'center',
+            }}
+        >
+            <p>Design without boundaries. Welcome to DrawP2P</p>
+        </div>
+    )
+}

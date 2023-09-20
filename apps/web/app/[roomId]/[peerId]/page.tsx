@@ -18,7 +18,7 @@ export default function YjsPeer() {
     useEffect(() => {
         if (node && !hasDialed) {
             const dial = async () => {
-                const conn = await node.dial(multiaddr(`/ip4/20.40.52.207/tcp/41000/ws/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf/p2p-circuit/p2p/${peerId}`))
+                const conn = await node.dial(multiaddr(`/dns4/drawp2p.xyz/tcp/443/wss/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf/p2p-circuit/p2p/${peerId}`))
                 console.log(conn)
                 setHasDialed(true)
             }
@@ -75,7 +75,7 @@ const NameEditor = track(({ node, roomId }) => {
                 />
                 <button
                     className="text-center px-4 py-2 cursor-pointer h-full text-white rounded-lg bg-[#2f80ed] w-2/5"
-                    onClick={async () => { navigator.clipboard.writeText(`http://localhost:3000/${roomId}/${node.peerId.toString()}`) }}
+                    onClick={async () => { navigator.clipboard.writeText(`https://drawp2p.xyz/${roomId}/${node.peerId.toString()}`) }}
                 >
                     Copy Session Link
                 </button>

@@ -22,7 +22,7 @@ export const createPeer = async () => {
         streamMuxers: [yamux(), mplex()],
         peerDiscovery: [
             bootstrap({
-                list: ["/ip4/20.40.52.207/tcp/41000/ws/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf"]
+                list: ["/dns4/drawp2p.xyz/tcp/443/wss/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf"]
             }),
             pubsubPeerDiscovery()
         ],
@@ -31,15 +31,15 @@ export const createPeer = async () => {
             identify: identifyService(),
             dht: kadDHT()
         },
-        connectionGater: {
-            denyDialMultiaddr: () => {
-                // by default we refuse to dial local addresses from the browser since they
-                // are usually sent by remote peers broadcasting undialable multiaddrs but
-                // here we are explicitly connecting to a local node so do not deny dialing
-                // any discovered address
-                return false
-            }
-        },
+        // connectionGater: {
+        //     denyDialMultiaddr: () => {
+        //         // by default we refuse to dial local addresses from the browser since they
+        //         // are usually sent by remote peers broadcasting undialable multiaddrs but
+        //         // here we are explicitly connecting to a local node so do not deny dialing
+        //         // any discovered address
+        //         return false
+        //     }
+        // },
     })
     return node
 }

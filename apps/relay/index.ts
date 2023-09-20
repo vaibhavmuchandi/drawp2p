@@ -38,7 +38,7 @@ const main = async () => {
                     applyDefaultLimit: true,
                     defaultDurationLimit: 180 * 60 * 1000,
                     defaultDataLimit: BigInt(1 << 30),
-                    maxReservations: 32,
+                    maxReservations: 64,
                 }
             }),
             pubsub: gossipsub({ allowPublishToZeroPeers: true }),

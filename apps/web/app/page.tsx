@@ -44,7 +44,7 @@ function CustomTopZone() {
         textAlign: 'center',
       }}
     >
-      <p>Design without boundaries. Welcome to DrawP2P</p>
+      <p>Draw without boundaries. Welcome to DrawP2P</p>
     </div>
   )
 }

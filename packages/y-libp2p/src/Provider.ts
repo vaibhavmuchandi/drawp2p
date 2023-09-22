@@ -1,7 +1,7 @@
 import type { Libp2p } from '@libp2p/interface-libp2p'
 import type { Awareness } from 'y-protocols/awareness'
 import * as Y from 'yjs'
-import { Uint8ArrayEquals } from './utils.js'
+import { Uint8ArrayEquals } from './utils'
 import { peerIdFromString } from '@libp2p/peer-id'
 import * as awarenessProtocol from 'y-protocols/awareness.js'
 import { multiaddr } from '@multiformats/multiaddr'

@@ -22,7 +22,7 @@ export const createPeer = async () => {
         streamMuxers: [yamux(), mplex()],
         peerDiscovery: [
             bootstrap({
-                list: ["/dns4/drawp2p.xyz/tcp/443/wss/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf"]
+                list: ["/dns4/relay.drawp2p.xyz/tcp/443/wss/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf"]
             }),
             pubsubPeerDiscovery()
         ],

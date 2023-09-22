@@ -33,7 +33,7 @@ const NameEditor = track(({ node, roomId }) => {
         setConnectedUsers(conns.length - 1)
 
         for (let conn of conns) {
-            if (!connections.includes(conn.remotePeer.toString()))
+            if (!connections.includes(conn.remotePeer.toString()) && conn.remotePeer.toString() !== "12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf")
                 setConnections([...connections, conn.remotePeer.toString()])
         }
     }
@@ -42,7 +42,7 @@ const NameEditor = track(({ node, roomId }) => {
         const conns = await node.getConnections()
         setConnectedUsers(conns.length - 1)
         for (let conn of conns) {
-            if (!connections.includes(conn.remotePeer.toString()))
+            if (!connections.includes(conn.remotePeer.toString()) && conn.remotePeer.toString() !== "12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf")
                 setConnections([...connections, conn.remotePeer.toString()])
         }
     })

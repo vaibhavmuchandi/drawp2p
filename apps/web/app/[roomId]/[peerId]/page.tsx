@@ -18,7 +18,7 @@ export default function YjsPeer() {
     useEffect(() => {
         if (node && !hasDialed) {
             const dial = async () => {
-                const conn = await node.dial(multiaddr(`/dns4/drawp2p.xyz/tcp/443/wss/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf/p2p-circuit/p2p/${peerId}`))
+                const conn = await node.dial(multiaddr(`/dns4/relay.drawp2p.xyz/tcp/443/wss/p2p/12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf/p2p-circuit/p2p/${peerId}`))
                 console.log(conn)
                 setHasDialed(true)
             }
@@ -46,7 +46,7 @@ const NameEditor = track(({ node, roomId }) => {
         setConnectedUsers(conns.length - 1)
 
         for (let conn of conns) {
-            if (!connections.includes(conn.remotePeer.toString()))
+            if (!connections.includes(conn.remotePeer.toString()) && conn.remotePeer.toString() !== "12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf")
                 setConnections([...connections, conn.remotePeer.toString()])
         }
     }
@@ -55,7 +55,7 @@ const NameEditor = track(({ node, roomId }) => {
         const conns = await node.getConnections()
         setConnectedUsers(conns.length - 1)
         for (let conn of conns) {
-            if (!connections.includes(conn.remotePeer.toString()))
+            if (!connections.includes(conn.remotePeer.toString()) && conn.remotePeer.toString() !== "12D3KooWSRkaW3kEk5n6rhwedNsDMPfuSrWLx8JL93WSFQh8v8Gf")
                 setConnections([...connections, conn.remotePeer.toString()])
         }
     })

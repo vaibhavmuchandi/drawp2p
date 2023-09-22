@@ -16,7 +16,7 @@ module.exports = {
   async rewrites() {
     return [
       {
-        "source": "/:roomId*/:peerId*",
+        "source": "https://drawp2p.xyz/:roomId*/:peerId*",
         "destination": "/:roomId*/:peerId*"
       }
     ]

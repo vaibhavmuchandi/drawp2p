@@ -1,4 +1,4 @@
-import Provider from "./src/Provider.js";
+import Provider from "./src/Provider";
 
 const Libp2pProvider = Provider
 

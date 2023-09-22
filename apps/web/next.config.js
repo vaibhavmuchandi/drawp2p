@@ -12,13 +12,5 @@ module.exports = {
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
-  },
-  async rewrites() {
-    return [
-      {
-        "source": "/:roomId*/:peerId*",
-        "destination": "https://drawp2p.xyz/:roomId*/:peerId*"
-      }
-    ]
   }
 };

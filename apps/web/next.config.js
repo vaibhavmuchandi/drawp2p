@@ -13,4 +13,16 @@ module.exports = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+  async rewrites() {
+    return [
+      {
+        "source": "/:roomId*",
+        "destination": "https://drawp2p.xyz/:roomId*",
+      },
+      {
+        "source": "/:roomId*/:peerId*",
+        "destination": "https://drawp2p.xyz/:roomId*/:peerId*"
+      }
+    ]
+  }
 };
